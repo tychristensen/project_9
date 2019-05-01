@@ -91,14 +91,14 @@ class BarsnBakeries:
         
 
         # search results listbox callbacks
-        self.results_lb.bind('<<ListboxSelect>>', self.album_select)
+        self.results_lb.bind('<<ListboxSelect>>')
 
     def search_action(self):
         search_string = self.search_text.get()
         self.results_lb.delete(0, self.results_lb.size())
         self.current_search_results = self.search(search_string)
-        for artist, title, year, album_id in self.current_search_results:
-            s = artist + ' - ' + title + ' (' + str(year) + ')'
+        for name, address, stars in self.current_search_results:
+            s = name + ' - ' + address + ' (' + str(stars) + ')'
             self.results_lb.insert(END, s)
 
     def recreate_edit_frame(self):
@@ -107,7 +107,10 @@ class BarsnBakeries:
         self.edit_frame.grid(row = 2, column = 0, padx = 10, pady = 10)
 
     def search(self, search_string):
-        query = """ """
+        query = """SELECT name, address, stars
+                   FROM barsnbakeries
+                   WHERE lower(name) LIKE lower(%s)
+                   AND service = \"bar\""""
 
         search_string = '%' + search_string + '%'
         try:
